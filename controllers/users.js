@@ -46,16 +46,19 @@ const editUserData = async (req, res) => {
   try {
     const { name, about } = req.body
     const user = await User.findByIdAndUpdate(req.user._id, { name, about })
+    if (name.lenght < 2 || name.lenght > 30 || about.lenght < 2 || about.lenght > 30) {
+      return Promise.reject(new ValidationError('Переданы некорректные данные при создании карточки'))
+    }
     if (!user) {
       return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
     }
     res.status(200).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res.status(ValidationError.statusCode).send({ message: 'Переданы некорректные данные при создании карточки.' })
+      return res.status(ValidationError.statusCode).send(err.message)
     }
-    if (err.message === 'NotFoundError') {
-      return res.status(NotFoundError.statusCode).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+    if (err.name === 'NotFoundError') {
+      return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: 'Ошибка по умолчанию' })
   }
@@ -72,10 +75,10 @@ const editUserAvatar = async (req, res) => {
     res.status(200).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res.status(ValidationError.statusCode).send({ message: 'Переданы некорректные данные при создании карточки.' })
+      return res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' })
     }
     if (err.message === 'NotFoundError') {
-      return res.status(NotFoundError.statusCode).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+      return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: 'Ошибка по умолчанию' })
   }
