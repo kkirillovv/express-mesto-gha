@@ -46,7 +46,7 @@ const editUserData = async (req, res) => {
   try {
     const { name, about } = req.body
     const user = await User.findByIdAndUpdate(req.user._id, { name, about })
-    if (name.lenght < 2 || name.lenght > 30 || about.lenght < 2 || about.lenght > 30) {
+    if (name.length < 2 || name.length > 30 || about.length < 2 || about.length > 30) {
       return Promise.reject(new ValidationError('Переданы некорректные данные при создании карточки'))
     }
     if (!user) {

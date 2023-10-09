@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const Card = require('../models/card')
 const { ValidationError, NotFoundError } = require('../errors')
 
@@ -20,21 +21,21 @@ const createCard = (req, res) => {
     })
 }
 
-const deleteCardById = (req, res) => {
-  Card.findById(req.params.cardId)
-    .then((card) => {
-      if (card && card.owner.equals(req.user._id)) {
-        Card.deleteOne(card)
-          .then(() => res.send({ message: 'Карточка удалена' }))
-      }
-    })
-    .catch((err) => {
-      if (err.message === 'NotFoundError') {
-        res.status(NotFoundError.statusCode).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
-        return
-      }
-      res.status(500).send({ message: 'Ошибка по умолчанию' })
-    })
+// eslint-disable-next-line consistent-return
+const deleteCardById = async (req, res) => {
+  try {
+    const { cardId } = req.params
+    const card = await Card.findByIdAndDelete(cardId)
+    if (!mongoose.Types.ObjectId.isValid(cardId)) {
+      return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
+    }
+    res.status(200).send({ data: card, message: 'Карточка удалена' })
+  } catch (err) {
+    if (err.name === 'NotFoundError') {
+      return res.status(NotFoundError.statusCode).send(err.message)
+    }
+    res.status(500).send({ message: 'Ошибка по умолчанию' })
+  }
 }
 
 const likeCardById = (req, res) => {

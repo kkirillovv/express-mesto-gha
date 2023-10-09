@@ -8,9 +8,6 @@ const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.en
 
 const app = express()
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
 // подключаемся к серверу mongo
 mongoose.connect(DB_URL, {
   useNewUrlParser: true,
@@ -18,17 +15,20 @@ mongoose.connect(DB_URL, {
   // useFindAndModify: false,
 })
 
-app.use('/users', usersRouter)
-app.use('/cards', cardsRouter)
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемая страница не найдена.' })
-})
-
 app.use((req, res, next) => {
   req.user = {
     _id: '6523e95d758a8272a6f38175', // вставьте сюда _id созданного в предыдущем пункте пользователя
   }
   next()
+})
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+app.use('/users', usersRouter)
+app.use('/cards', cardsRouter)
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Запрашиваемая страница не найдена.' })
 })
 
 app.listen(PORT)
