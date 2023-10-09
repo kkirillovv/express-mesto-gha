@@ -20,6 +20,9 @@ mongoose.connect(DB_URL, {
 
 app.use('/users', usersRouter)
 app.use('/cards', cardsRouter)
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Запрашиваемая страница не найдена.' })
+})
 
 app.use((req, res, next) => {
   req.user = {
