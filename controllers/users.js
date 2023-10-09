@@ -23,7 +23,7 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body
   User.create({ name, about, avatar })
     .then((user) => {
-      if (name.lenght > 2 && name.lenght < 31) {
+      if (user.name.length > 2 && user.name.length < 31) {
         res.send({ data: user })
       } else {
         throw new ValidationError('Переданы некорректные данные при создании карточки')
