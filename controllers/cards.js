@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Card = require('../models/card')
-const { ValidationError, NotFoundError } = require('../errors')
+const { NotFoundError } = require('../errors')
 
 const getCards = (req, res) => {
   Card.find({})
