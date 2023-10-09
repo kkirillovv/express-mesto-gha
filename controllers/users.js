@@ -45,7 +45,8 @@ const createUser = async (req, res) => {
 const editUserData = async (req, res) => {
   try {
     const { name, about } = req.body
-    const user = await User.findByIdAndUpdate(req.user._id, { name, about })
+    // eslint-disable-next-line max-len
+    const user = await User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     if (name.length < 2 || name.length > 30 || about.length < 2 || about.length > 30) {
       return Promise.reject(new ValidationError('Переданы некорректные данные при создании карточки'))
     }
@@ -68,7 +69,8 @@ const editUserData = async (req, res) => {
 const editUserAvatar = async (req, res) => {
   try {
     const { avatar } = req.body
-    const user = await User.findByIdAndUpdate(req.user._id, { avatar })
+    // eslint-disable-next-line max-len
+    const user = await User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     if (!user) {
       return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
     }

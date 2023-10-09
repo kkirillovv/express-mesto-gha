@@ -14,7 +14,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ValidationError.statusCode).send({ message: 'Переданы некорректные данные при создании карточки.' })
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' })
         return
       }
       res.status(500).send({ message: 'Ошибка по умолчанию' })
@@ -46,12 +46,8 @@ const likeCardById = (req, res) => {
   )
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ValidationError.statusCode).send({ message: 'Переданы некорректные данные при создании карточки.' })
-        return
-      }
       if (err.message === 'NotFoundError') {
-        res.status(NotFoundError.statusCode).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+        res.status(404).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
         return
       }
       res.status(500).send({ message: 'Ошибка по умолчанию' })
@@ -66,12 +62,8 @@ const dislikeCardById = (req, res) => {
   )
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ValidationError.statusCode).send({ message: 'Переданы некорректные данные при создании карточки.' })
-        return
-      }
       if (err.message === 'NotFoundError') {
-        res.status(NotFoundError.statusCode).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+        res.status(404).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
         return
       }
       res.status(500).send({ message: 'Ошибка по умолчанию' })
