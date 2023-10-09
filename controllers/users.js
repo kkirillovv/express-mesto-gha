@@ -19,23 +19,38 @@ const getUserById = (req, res) => {
     })
 }
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body
-  User.create({ name, about, avatar })
-    .then((user) => {
-      if (user.name.length > 2 && user.name.length < 31) {
-        res.send({ data: user })
-      } else {
-        throw new ValidationError('Переданы некорректные данные при создании карточки')
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ValidationError.statusCode).send(err.message)
-        return
-      }
-      res.status(500).send({ message: 'Ошибка по умолчанию' })
-    })
+// const createUser = (req, res) => {
+//   const { name, about, avatar } = req.body
+//   User.create({ name, about, avatar })
+//     .then((user) => {
+//       if (user.name.length > 2 && user.name.length < 31) {
+//         res.send({ data: user })
+//       } else {
+//         throw new ValidationError('Переданы некорректные данные при создании карточки')
+//       }
+//     })
+//     .catch((err) => {
+//       if (err.name === 'ValidationError') {
+//         res.status(ValidationError.statusCode).send(err.message)
+//         return
+//       }
+//       res.status(500).send({ message: 'Ошибка по умолчанию' })
+//     })
+// }
+
+// eslint-disable-next-line consistent-return
+const createUser = async (req, res) => {
+  try {
+    const { name, about, avatar } = req.body
+    const user = new User({ name, about, avatar })
+    await user.create()
+    res.send({ data: user })
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(ValidationError.statusCode).json({ message: 'Переданы некорректные данные при создании пользователя.' })
+    }
+    res.status(500).send({ message: 'Ошибка по умолчанию' })
+  }
 }
 
 const editUserData = (req, res) => {
