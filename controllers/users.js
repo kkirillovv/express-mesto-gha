@@ -2,15 +2,16 @@ const { Promise } = require('mongoose')
 const User = require('../models/user')
 const { NotFoundError } = require('../errors')
 
-const errorValidation = 'Переданы некорректные данные'
-const errorDefaultServer = 'Ошибка по умолчанию'
+const isValidationError = 'Переданы некорректные данные'
+const isDefaultServerError = 'Ошибка по умолчанию'
+const isCastError = 'Cast to ObjectId failed'
 
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({})
     res.status(200).send({ data: users })
   } catch (err) {
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 
@@ -23,13 +24,16 @@ const getUserById = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(404).send({ message: isCastError })
+    }
     if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: errorValidation })
+      return res.status(400).send({ message: isValidationError })
     }
     if (err.name === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 
@@ -41,9 +45,9 @@ const createUser = async (req, res) => {
     res.status(201).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: errorValidation })
+      return res.status(400).send({ message: isValidationError })
     }
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 
@@ -59,12 +63,12 @@ const editUserData = async (req, res) => {
     res.status(200).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: errorValidation })
+      return res.status(400).send({ message: isValidationError })
     }
     if (err.name === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 
@@ -80,12 +84,12 @@ const editUserAvatar = async (req, res) => {
     res.status(200).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: errorValidation })
+      return res.status(400).send({ message: isValidationError })
     }
     if (err.message === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 

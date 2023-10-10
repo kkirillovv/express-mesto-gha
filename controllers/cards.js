@@ -2,25 +2,26 @@ const mongoose = require('mongoose')
 const Card = require('../models/card')
 const { NotFoundError } = require('../errors')
 
-const errorValidation = 'Переданы некорректные данные'
-const errorDefaultServer = 'Ошибка по умолчанию'
+const isValidationError = 'Переданы некорректные данные'
+const isDefaultServerError = 'Ошибка по умолчанию'
+const isCastError = 'Cast to ObjectId failed'
 
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: errorDefaultServer }))
+    .catch(() => res.status(500).send({ message: isDefaultServerError }))
 }
 
 const createCard = (req, res) => {
   const { name, link } = req.body
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(201).send({ data: card }))
+    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: errorValidation })
-        return
+        return res.status(400).send({ message: isValidationError })
       }
-      res.status(500).send({ message: errorDefaultServer })
+      res.status(500).send({ message: isDefaultServerError })
     })
 }
 
@@ -34,10 +35,13 @@ const deleteCardById = async (req, res) => {
     }
     res.status(200).send({ data: card, message: 'Карточка удалена' })
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(404).send({ message: isCastError })
+    }
     if (err.name === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 
@@ -55,10 +59,13 @@ const likeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(404).send({ message: isCastError })
+    }
     if (err.message === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 
@@ -76,10 +83,13 @@ const dislikeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(404).send({ message: isCastError })
+    }
     if (err.message === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: errorDefaultServer })
+    res.status(500).send({ message: isDefaultServerError })
   }
 }
 
