@@ -26,7 +26,7 @@ const getUserById = async (req, res) => {
     if (err.name === 'ValidationError') {
       return res.status(400).send({ message: isValidationError })
     }
-    if (err.name === 'NotFoundError') {
+    if (err.name === 'NotFoundError' || err.name === 'CastError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })

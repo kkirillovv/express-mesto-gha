@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/users', usersRouter)
 app.use('/cards', cardsRouter)
 app.use('*', (req, res) => {
-  const errorNotFound = 'Запрашиваемая страница не найдена.'
-  res.status(404).send({ message: errorNotFound })
+  const isPageNotFoundError = 'Запрашиваемая страница не найдена'
+  res.status(404).send({ message: isPageNotFoundError })
 })
 
 app.listen(PORT)
