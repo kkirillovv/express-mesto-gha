@@ -4,7 +4,6 @@ const { NotFoundError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка по умолчанию'
-const isCastError = 'Cast to ObjectId failed'
 
 const getUsers = async (req, res) => {
   try {
@@ -24,9 +23,6 @@ const getUserById = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
-    if (err.name === 'CastError') {
-      return res.status(404).send({ message: isCastError })
-    }
     if (err.name === 'ValidationError') {
       return res.status(400).send({ message: isValidationError })
     }

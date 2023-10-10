@@ -10,7 +10,7 @@ class ValidationError extends Error {
 class NotFoundError extends Error {
   constructor(message) {
     super(message)
-    this.name = 'NotFoundErrorr'
+    this.name = 'NotFoundError'
     this.statusCode = 404
   }
 }
