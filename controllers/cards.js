@@ -4,7 +4,7 @@ const { NotFoundError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка по умолчанию'
-// const isCastError = 'Cast to ObjectId failed'
+const isCastError = 'Cast to ObjectId failed'
 
 const getCards = (req, res) => {
   Card.find({})
@@ -35,9 +35,9 @@ const deleteCardById = async (req, res) => {
     }
     res.status(200).send({ data: card, message: 'Карточка удалена' })
   } catch (err) {
-    // if (err.name === 'CastError') {
-    //   return res.status(404).send({ message: isCastError })
-    // }
+    if (err.name === 'CastError') {
+      return res.status(404).send({ message: isCastError })
+    }
     if (err.name === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
@@ -59,10 +59,7 @@ const likeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
-    // if (err.name === 'CastError') {
-    //   return res.status(404).send({ message: isCastError })
-    // }
-    if (err.message === 'NotFoundError') {
+    if (err.name === 'NotFoundError' || err.name === 'CastError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
@@ -83,10 +80,7 @@ const dislikeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
-    // if (err.name === 'CastError') {
-    //   return res.status(404).send({ message: isCastError })
-    // }
-    if (err.message === 'NotFoundError') {
+    if (err.name === 'NotFoundError' || err.name === 'CastError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
