@@ -21,15 +21,15 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      return res.status(404).json({ message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
+      return Promise.reject(new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`))
     }
     res.status(200).send({ data: user })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(400).send({ message: isCastError })
+      return res.status(400).json({ message: isCastError })
     }
     if (err.name === NotFoundError.name) {
-      return res.status(404).send(err.message)
+      return res.status(404).json(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
   }
