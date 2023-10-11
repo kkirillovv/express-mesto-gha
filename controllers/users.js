@@ -1,18 +1,18 @@
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError, CastError } = require('../errors')
+const { NotFoundError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
-const isDefaultServerError = 'Ошибка по умолчанию'
-const isCastError = 'Cast to ObjectId failed'
+const isDefaultServerError = 'Ошибка сервера по умолчанию'
+// const isCastError = 'Cast to ObjectId failed'
 
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({})
-    res.status(200).send({ data: users })
+    res.status(constants.HTTP_STATUS_OK).send({ data: users })
   } catch (err) {
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
@@ -23,15 +23,15 @@ const getUserById = async (req, res) => {
     if (!user) {
       return Promise.reject(new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`))
     }
-    res.status(200).send({ data: user })
+    res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    if (err.name === CastError.name) {
-      return res.status(400).json({ message: isCastError })
-    }
+    // if (err.name === CastError.name) {
+    //   return res.status(400).json({ message: isCastError })
+    // }
     if (err.name === NotFoundError.name) {
-      return res.status(404).json(err.message)
+      return res.status(constants.HTTP_STATUS_NOT_FOUND).json(err.message)
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
@@ -45,7 +45,7 @@ const createUser = async (req, res) => {
     if (err.name === 'ValidationError') {
       return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
@@ -58,15 +58,15 @@ const editUserData = async (req, res) => {
     if (!user) {
       return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
     }
-    res.status(200).send({ data: user })
+    res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
     }
     if (err.name === NotFoundError.name) {
-      return res.status(404).send(err.message)
+      return res.status(constants.HTTP_STATUS_NOT_FOUND).send(err.message)
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
@@ -79,15 +79,15 @@ const editUserAvatar = async (req, res) => {
     if (!user) {
       return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
     }
-    res.status(200).send({ data: user })
+    res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
     }
     if (err.message === NotFoundError.name) {
-      return res.status(404).send(err.message)
+      return res.status(constants.HTTP_STATUS_NOT_FOUND).send(err.message)
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
