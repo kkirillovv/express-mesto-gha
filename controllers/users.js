@@ -28,10 +28,10 @@ const getUserById = async (req, res) => {
       return res.status(400).send({ message: isValidationError })
     }
     if (err.name === CastError.name) {
-      return res.status(404).send({ message: isCastError })
+      return res.status(400).send({ message: isCastError })
     }
     if (err.name === NotFoundError.name) {
-      return res.status(NotFoundError.statusCode).send(err.message)
+      return res.status(404).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
   }
@@ -66,7 +66,7 @@ const editUserData = async (req, res) => {
       return res.status(400).send({ message: isValidationError })
     }
     if (err.name === NotFoundError.name) {
-      return res.status(NotFoundError.statusCode).send(err.message)
+      return res.status(404).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
   }
@@ -87,7 +87,7 @@ const editUserAvatar = async (req, res) => {
       return res.status(400).send({ message: isValidationError })
     }
     if (err.message === NotFoundError.name) {
-      return res.status(NotFoundError.statusCode).send(err.message)
+      return res.status(404).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
   }
