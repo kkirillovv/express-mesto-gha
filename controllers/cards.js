@@ -20,7 +20,6 @@ const createCard = (req, res) => {
     .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      // eslint-disable-next-line no-undef
       if (err.name === ValidationError.name) {
         return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
       }
@@ -33,9 +32,9 @@ const createCard = (req, res) => {
 const deleteCardById = async (req, res) => {
   try {
     const { cardId } = req.params
-    if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
-    }
+    // if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    //   return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+    // }
     const card = await Card.findByIdAndDelete(cardId)
     if (!card) {
       return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })
