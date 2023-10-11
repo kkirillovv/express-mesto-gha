@@ -31,7 +31,7 @@ const deleteCardById = async (req, res) => {
     const { cardId } = req.params
     const card = await Card.findByIdAndDelete(cardId)
     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
+      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
     }
     res.status(200).send({ data: card, message: 'Карточка удалена' })
   } catch (err) {
@@ -55,7 +55,7 @@ const likeCardById = async (req, res) => {
       { new: true },
     )
     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
+      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
     }
     res.status(200).send({ data: card })
   } catch (err) {
@@ -79,7 +79,7 @@ const dislikeCardById = async (req, res) => {
       { new: true },
     )
     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
+      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
     }
     res.status(200).send({ data: card })
   } catch (err) {
