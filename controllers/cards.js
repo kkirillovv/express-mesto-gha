@@ -1,10 +1,11 @@
 const { constants } = require('http2')
 const mongoose = require('mongoose')
 const Card = require('../models/card')
-const { NotFoundError, CastError } = require('../errors')
+const { ValidationError, NotFoundError, CastError } = require('../errors')
 
-const isDefaultServerError = 'Ошибка сервера'
-const isCastError = 'Переданы некорректные данные'
+const isValidationError = 'Переданы некорректные данные'
+const isDefaultServerError = 'Ошибка по умолчанию'
+const isCastError = 'Cast to ObjectId failed'
 
 const getCards = (req, res) => {
   Card.find({})
@@ -21,7 +22,7 @@ const createCard = (req, res) => {
     .catch((err) => {
       // eslint-disable-next-line no-undef
       if (err.name === ValidationError.name) {
-        return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
+        return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
       }
       // eslint-disable-next-line max-len
       res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
