@@ -1,11 +1,11 @@
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError } = require('../errors')
+const { NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
-// const isCastError = 'Cast to ObjectId failed'
+const isCastError = 'Cast to ObjectId failed'
 
 const getUsers = async (req, res) => {
   try {
@@ -25,9 +25,9 @@ const getUserById = async (req, res) => {
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    // if (err.name === CastError.name) {
-    //   return res.status(400).json({ message: isCastError })
-    // }
+    if (err.name === CastError.name) {
+      return res.status(400).json({ message: isCastError })
+    }
     if (err.name === NotFoundError.name) {
       return res.status(constants.HTTP_STATUS_NOT_FOUND).json(err.message)
     }
@@ -40,7 +40,7 @@ const createUser = async (req, res) => {
   try {
     const { name, about, avatar } = req.body
     const user = await User.create({ name, about, avatar })
-    res.status(201).send({ data: user })
+    res.status(constants.HTTP_STATUS_CREATED).send({ data: user })
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
