@@ -1,27 +1,31 @@
+// eslint-disable-next-line import/no-import-module-exports
+import { constants } from 'http2'
+
 const mongoose = require('mongoose')
 const Card = require('../models/card')
-const { ValidationError, NotFoundError, CastError } = require('../errors')
+const { NotFoundError, CastError } = require('../errors')
 
-const isValidationError = 'Переданы некорректные данные'
-const isDefaultServerError = 'Ошибка по умолчанию'
-const isCastError = 'Cast to ObjectId failed'
+const isDefaultServerError = 'Ошибка сервера'
+const isCastError = 'Переданы некорректные данные'
 
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: isDefaultServerError }))
+    // eslint-disable-next-line max-len
+    .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError }))
 }
 
 const createCard = (req, res) => {
   const { name, link } = req.body
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === ValidationError.name) {
-        return res.status(400).send({ message: isValidationError })
+      if (err.name === CastError.name) {
+        return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
       }
-      res.status(500).send({ message: isDefaultServerError })
+      // eslint-disable-next-line max-len
+      res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
     })
 }
 
@@ -36,7 +40,7 @@ const deleteCardById = async (req, res) => {
     if (!card) {
       return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })
     }
-    res.status(200).send({ data: card, message: 'Карточка удалена' })
+    res.status(constants.HTTP_STATUS_OK).send({ data: card, message: 'Карточка удалена' })
   } catch (err) {
     if (err.name === CastError.name) {
       return res.status(CastError.statusCode).send({ message: isCastError })
@@ -44,7 +48,7 @@ const deleteCardById = async (req, res) => {
     if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
@@ -63,7 +67,7 @@ const likeCardById = async (req, res) => {
     if (!card) {
       return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })
     }
-    res.status(200).send({ data: card })
+    res.status(constants.HTTP_STATUS_OK).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
       return res.status(CastError.statusCode).send({ message: isCastError })
@@ -71,7 +75,7 @@ const likeCardById = async (req, res) => {
     if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
@@ -90,7 +94,7 @@ const dislikeCardById = async (req, res) => {
     if (!card) {
       return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })
     }
-    res.status(200).send({ data: card })
+    res.status(constants.HTTP_STATUS_OK).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
       return res.status(CastError.statusCode).send({ message: isCastError })
@@ -98,7 +102,7 @@ const dislikeCardById = async (req, res) => {
     if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
