@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-import-module-exports
-import { constants } from 'http2'
-
+const { constants } = require('http2')
 const mongoose = require('mongoose')
 const Card = require('../models/card')
 const { NotFoundError, CastError } = require('../errors')
