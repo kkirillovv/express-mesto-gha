@@ -8,7 +8,7 @@ class NotFoundError extends Error {
   constructor(message) {
     super(message)
     this.name = 'NotFoundError'
-    this.statusCode = 404 // NOT_FOUND
+    this.statusCode = 404 // HTTP_STATUS_NOT_FOUND
   }
 }
 
@@ -16,7 +16,7 @@ class CastError extends Error {
   constructor(message) {
     super(message)
     this.name = 'CastError'
-    this.statusCode = 400 // BAD_REQUEST
+    this.statusCode = 400 // HTTP_STATUS_BAD_REQUEST
   }
 }
 
