@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-import-module-exports
 const { constants } = require('http2')
 const mongoose = require('mongoose')
 const Card = require('../models/card')
@@ -20,7 +19,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === CastError.name) {
+      if (err.statusCode === constants.HTTP_STATUS_BAD_REQUEST) {
         return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
       }
       // eslint-disable-next-line max-len
