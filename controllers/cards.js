@@ -83,8 +83,9 @@ const dislikeCardById = async (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
+  const message = 'Лайк удален'
   const errorMessage = `Карточка с Id = ${req.user._id} не найдена`
-  handleErrors(req, res, func, '', errorMessage)
+  handleErrors(req, res, func, message, errorMessage)
 }
 
 // eslint-disable-next-line object-curly-newline
