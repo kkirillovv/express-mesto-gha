@@ -29,17 +29,17 @@ class CastError extends Error {
 }
 
 // eslint-disable-next-line consistent-return
-const handleErrors = async (req, res, func, message, errorMessage) => {
+const handleErrors = async (req, res, func, errorMessage) => {
   try {
     const { id } = req.params
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return Promise.reject(new CastError(isCastError))
     }
-    const result = await func()
+    const result = await func(id)
     if (!result) {
       return Promise.reject(new NotFoundError(errorMessage))
     }
-    res.status(200).json({ data: result, message })
+    res.status(200).json({ data: result })
   } catch (err) {
     if (err.name === CastError.name) {
       return res.status(CastError.statusCode).send(err.message)
