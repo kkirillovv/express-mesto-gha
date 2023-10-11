@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Card = require('../models/card')
-const { NotFoundError } = require('../errors')
+const { ValidationError, NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка по умолчанию'
@@ -18,7 +18,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(201).send({ data: card }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === ValidationError.name) {
         return res.status(400).send({ message: isValidationError })
       }
       res.status(500).send({ message: isDefaultServerError })
@@ -35,10 +35,10 @@ const deleteCardById = async (req, res) => {
     }
     res.status(200).send({ data: card, message: 'Карточка удалена' })
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === CastError.name) {
       return res.status(404).send({ message: isCastError })
     }
-    if (err.name === 'NotFoundError') {
+    if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
@@ -59,10 +59,10 @@ const likeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === CastError.name) {
       return res.status(404).send({ message: isCastError })
     }
-    if (err.name === 'NotFoundError') {
+    if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
@@ -83,10 +83,10 @@ const dislikeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === CastError.name) {
       return res.status(404).send({ message: isCastError })
     }
-    if (err.name === 'NotFoundError') {
+    if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
