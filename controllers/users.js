@@ -20,7 +20,7 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      return Promise.reject(new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`))
+      return res.status(404).json({ message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
     }
     res.status(200).send({ data: user })
   } catch (err) {
