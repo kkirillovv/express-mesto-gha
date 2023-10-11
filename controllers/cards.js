@@ -19,7 +19,8 @@ const createCard = (req, res) => {
     .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.statusCode === constants.HTTP_STATUS_BAD_REQUEST) {
+      // eslint-disable-next-line no-undef
+      if (err.name === ValidationError.name) {
         return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
       }
       // eslint-disable-next-line max-len
