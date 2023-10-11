@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const Card = require('../models/card')
-// eslint-disable-next-line object-curly-newline
-const { ValidationError, NotFoundError, CastError, handleErrors } = require('../errors')
+const { ValidationError, NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка по умолчанию'
@@ -20,7 +19,7 @@ const createCard = (req, res) => {
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === ValidationError.name) {
-        return res.status(400).send({ message: isValidationError })
+        return res.status(ValidationError.statusCode).send({ message: isValidationError })
       }
       res.status(500).send({ message: isDefaultServerError })
     })
@@ -78,14 +77,29 @@ const likeCardById = async (req, res) => {
 
 // eslint-disable-next-line consistent-return
 const dislikeCardById = async (req, res) => {
-  const func = (id) => Card.findByIdAndUpdate(
-    id,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true },
-  )
-  // const message = 'Лайк удален'
-  const errorMessage = `Карточка с Id = ${req.user._id} не найдена`
-  handleErrors(req, res, func, errorMessage)
+  try {
+    const { cardId } = req.params
+    if (!mongoose.Types.ObjectId.isValid(cardId)) {
+      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+    }
+    const card = await Card.findByIdAndUpdate(
+      cardId,
+      { $pull: { likes: req.user._id } }, // убрать _id из массива
+      { new: true },
+    )
+    if (!card) {
+      return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })
+    }
+    res.status(200).send({ data: card })
+  } catch (err) {
+    if (err.name === CastError.name) {
+      return res.status(CastError.statusCode).send({ message: isCastError })
+    }
+    if (err.name === NotFoundError.name) {
+      return res.status(NotFoundError.statusCode).send(err.message)
+    }
+    res.status(500).send({ message: isDefaultServerError })
+  }
 }
 
 // eslint-disable-next-line object-curly-newline
