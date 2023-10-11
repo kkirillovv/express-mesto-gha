@@ -19,7 +19,7 @@ const createCard = (req, res) => {
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === ValidationError.name) {
-        return res.status(ValidationError.statusCode).send({ message: isValidationError })
+        return res.status(400).send({ message: isValidationError })
       }
       res.status(500).send({ message: isDefaultServerError })
     })
@@ -36,10 +36,10 @@ const deleteCardById = async (req, res) => {
     res.status(200).send({ data: card, message: 'Карточка удалена' })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(CastError.statusCode).send({ message: isCastError })
+      return res.status(400).send({ message: isCastError })
     }
     if (err.name === NotFoundError.name) {
-      return res.status(NotFoundError.statusCode).send(err.message)
+      return res.status(404).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
   }
@@ -60,10 +60,10 @@ const likeCardById = async (req, res) => {
     res.status(200).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(CastError.statusCode).send({ message: isCastError })
+      return res.status(400).send({ message: isCastError })
     }
     if (err.name === NotFoundError.name) {
-      return res.status(NotFoundError.statusCode).send(err.message)
+      return res.status(404).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
   }
@@ -84,10 +84,10 @@ const dislikeCardById = async (req, res) => {
     res.status(200).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(CastError.statusCode).send({ message: isCastError })
+      return res.status(400).send({ message: isCastError })
     }
     if (err.name === NotFoundError.name) {
-      return res.status(NotFoundError.statusCode).send(err.message)
+      return res.status(404).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
   }
