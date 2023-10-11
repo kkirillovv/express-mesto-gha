@@ -1,10 +1,10 @@
 const { constants } = require('http2')
 const mongoose = require('mongoose')
 const Card = require('../models/card')
-const { ValidationError, NotFoundError, CastError } = require('../errors')
+const { NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
-const isDefaultServerError = 'Ошибка по умолчанию'
+const isDefaultServerError = 'Ошибка сервера по умолчанию'
 const isCastError = 'Cast to ObjectId failed'
 
 const getCards = (req, res) => {
@@ -20,7 +20,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === ValidationError.name) {
+      if (err.name === 'ValidationError') {
         return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
       }
       // eslint-disable-next-line max-len
@@ -32,9 +32,9 @@ const createCard = (req, res) => {
 const deleteCardById = async (req, res) => {
   try {
     const { cardId } = req.params
-    // if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    //   return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
-    // }
+    if (!mongoose.Types.ObjectId.isValid(cardId)) {
+      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+    }
     const card = await Card.findByIdAndDelete(cardId)
     if (!card) {
       return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })

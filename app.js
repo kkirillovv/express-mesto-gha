@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const { constants } = require('http2')
 const usersRouter = require('./routes/users')
 const cardsRouter = require('./routes/cards')
 
@@ -29,7 +30,7 @@ app.use('/users', usersRouter)
 app.use('/cards', cardsRouter)
 app.use('*', (req, res) => {
   const isPageNotFoundError = 'Запрашиваемая страница не найдена'
-  res.status(404).send({ message: isPageNotFoundError })
+  res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: isPageNotFoundError })
 })
 
 app.listen(PORT)

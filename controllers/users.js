@@ -1,6 +1,7 @@
+const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { ValidationError, NotFoundError, CastError } = require('../errors')
+const { NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка по умолчанию'
@@ -24,9 +25,6 @@ const getUserById = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
-    if (err.name === ValidationError.name) {
-      return res.status(400).send({ message: isValidationError })
-    }
     if (err.name === CastError.name) {
       return res.status(400).send({ message: isCastError })
     }
@@ -44,8 +42,8 @@ const createUser = async (req, res) => {
     const user = await User.create({ name, about, avatar })
     res.status(201).send({ data: user })
   } catch (err) {
-    if (err.name === ValidationError.name) {
-      return res.status(400).send({ message: isValidationError })
+    if (err.name === 'ValidationError') {
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
     }
     res.status(500).send({ message: isDefaultServerError })
   }
@@ -62,8 +60,8 @@ const editUserData = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
-    if (err.name === ValidationError.name) {
-      return res.status(400).send({ message: isValidationError })
+    if (err.name === 'ValidationError') {
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
     }
     if (err.name === NotFoundError.name) {
       return res.status(404).send(err.message)
@@ -83,8 +81,8 @@ const editUserAvatar = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
-    if (err.name === ValidationError.name) {
-      return res.status(400).send({ message: isValidationError })
+    if (err.name === 'ValidationError') {
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
     }
     if (err.message === NotFoundError.name) {
       return res.status(404).send(err.message)

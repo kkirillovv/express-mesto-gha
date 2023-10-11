@@ -1,16 +1,9 @@
 // eslint-disable-next-line max-classes-per-file
+const { constants } = require('http2')
 const mongoose = require('mongoose')
 
-const isDefaultServerError = 'Ошибка по умолчанию'
+const isDefaultServerError = 'Ошибка сервера по умолчанию'
 const isCastError = 'Cast to ObjectId failed'
-
-class ValidationError extends Error {
-  constructor(message) {
-    super(message)
-    this.name = 'ValidationError'
-    this.statusCode = 400
-  }
-}
 
 class NotFoundError extends Error {
   constructor(message) {
@@ -39,7 +32,7 @@ const handleErrors = async (req, res, func, errorMessage) => {
     if (!result) {
       return Promise.reject(new NotFoundError(errorMessage))
     }
-    res.status(200).json({ data: result })
+    res.status(constants.HTTP_STATUS_OK).json({ data: result })
   } catch (err) {
     if (err.name === CastError.name) {
       return res.status(CastError.statusCode).send(err.message)
@@ -47,9 +40,9 @@ const handleErrors = async (req, res, func, errorMessage) => {
     if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
-    res.status(500).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
 
 // eslint-disable-next-line object-curly-newline
-module.exports = { ValidationError, NotFoundError, CastError, handleErrors }
+module.exports = { NotFoundError, CastError, handleErrors }
