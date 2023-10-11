@@ -19,7 +19,7 @@ const createCard = (req, res) => {
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === ValidationError.name) {
-        return res.status(ValidationError.statusCode).send({ message: isValidationError })
+        return res.status(400).send({ message: isValidationError })
       }
       res.status(500).send({ message: isDefaultServerError })
     })
