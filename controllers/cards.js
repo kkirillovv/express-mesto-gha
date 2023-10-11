@@ -59,7 +59,10 @@ const likeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
-    if (err.name === 'NotFoundError' || err.name === 'CastError') {
+    if (err.name === 'CastError') {
+      return res.status(404).send({ message: isCastError })
+    }
+    if (err.name === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
@@ -80,7 +83,10 @@ const dislikeCardById = async (req, res) => {
     }
     res.status(200).send({ data: card })
   } catch (err) {
-    if (err.name === 'NotFoundError' || err.name === 'CastError') {
+    if (err.name === 'CastError') {
+      return res.status(404).send({ message: isCastError })
+    }
+    if (err.name === 'NotFoundError') {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })

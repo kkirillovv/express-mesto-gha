@@ -1,6 +1,6 @@
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError } = require('../errors')
+const { ValidationError, NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка по умолчанию'
@@ -24,13 +24,13 @@ const getUserById = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err.name === ValidationError.name) {
       return res.status(400).send({ message: isValidationError })
     }
-    if (err.name === 'CastError') {
+    if (err.name === CastError.name) {
       return res.status(404).send({ message: isCastError })
     }
-    if (err.name === 'NotFoundError') {
+    if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
@@ -44,7 +44,7 @@ const createUser = async (req, res) => {
     const user = await User.create({ name, about, avatar })
     res.status(201).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err.name === ValidationError.name) {
       return res.status(400).send({ message: isValidationError })
     }
     res.status(500).send({ message: isDefaultServerError })
@@ -62,10 +62,10 @@ const editUserData = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err.name === ValidationError.name) {
       return res.status(400).send({ message: isValidationError })
     }
-    if (err.name === 'NotFoundError') {
+    if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })
@@ -83,10 +83,10 @@ const editUserAvatar = async (req, res) => {
     }
     res.status(200).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err.name === ValidationError.name) {
       return res.status(400).send({ message: isValidationError })
     }
-    if (err.message === 'NotFoundError') {
+    if (err.message === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
     }
     res.status(500).send({ message: isDefaultServerError })

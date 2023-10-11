@@ -15,4 +15,12 @@ class NotFoundError extends Error {
   }
 }
 
-module.exports = { ValidationError, NotFoundError }
+class CastError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'CastError'
+    this.statusCode = 404
+  }
+}
+
+module.exports = { ValidationError, NotFoundError, CastError }
