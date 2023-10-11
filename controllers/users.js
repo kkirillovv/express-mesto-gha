@@ -21,16 +21,17 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      return Promise.reject(new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`))
+      return res.status(constants.HTTP_STATUS_NOT_FOUND)
+        .json({ message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
     if (err.name === CastError.name) {
       return res.status(400).json({ message: isCastError })
     }
-    if (err.name === NotFoundError.name) {
-      return res.status(constants.HTTP_STATUS_NOT_FOUND).json(err.message)
-    }
+    // if (err.name === NotFoundError.name) {
+    //   return res.status(constants.HTTP_STATUS_NOT_FOUND).json(err.message)
+    // }
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
