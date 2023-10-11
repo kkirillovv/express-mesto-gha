@@ -45,7 +45,7 @@ const createUser = async (req, res) => {
     res.status(201).send({ data: user })
   } catch (err) {
     if (err.name === ValidationError.name) {
-      return res.status(400).send({ message: isValidationError })
+      return res.status(ValidationError.statusCode).send({ message: isValidationError })
     }
     res.status(500).send({ message: isDefaultServerError })
   }
@@ -63,7 +63,7 @@ const editUserData = async (req, res) => {
     res.status(200).send({ data: user })
   } catch (err) {
     if (err.name === ValidationError.name) {
-      return res.status(400).send({ message: isValidationError })
+      return res.status(ValidationError.statusCode).send({ message: isValidationError })
     }
     if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
@@ -84,7 +84,7 @@ const editUserAvatar = async (req, res) => {
     res.status(200).send({ data: user })
   } catch (err) {
     if (err.name === ValidationError.name) {
-      return res.status(400).send({ message: isValidationError })
+      return res.status(ValidationError.statusCode).send({ message: isValidationError })
     }
     if (err.message === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
