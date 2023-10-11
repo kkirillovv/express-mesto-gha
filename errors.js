@@ -1,6 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
 const { constants } = require('http2')
-const mongoose = require('mongoose')
 
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
 const isCastError = 'Cast to ObjectId failed'
@@ -25,15 +24,15 @@ class CastError extends Error {
 const handleErrors = async (req, res, func, errorMessage) => {
   try {
     const { id } = req.params
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).json({ message: isCastError })
-    }
     const result = await func(id)
     if (!result) {
       return res.status(constants.HTTP_STATUS_NOT_FOUND).json({ message: errorMessage })
     }
     res.status(constants.HTTP_STATUS_OK).json({ data: result })
   } catch (err) {
+    if (err.name === CastError.name) {
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
+    }
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
