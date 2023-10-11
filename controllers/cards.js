@@ -20,7 +20,7 @@ const createCard = (req, res) => {
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === ValidationError.name) {
-        return res.status(ValidationError.statusCode).send({ message: isValidationError })
+        return res.status(400).send({ message: isValidationError })
       }
       res.status(500).send({ message: isDefaultServerError })
     })
@@ -78,8 +78,8 @@ const likeCardById = async (req, res) => {
 
 // eslint-disable-next-line consistent-return
 const dislikeCardById = async (req, res) => {
-  const func = (cardId) => Card.findByIdAndUpdate(
-    cardId,
+  const func = (id) => Card.findByIdAndUpdate(
+    id,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
