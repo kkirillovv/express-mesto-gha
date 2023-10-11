@@ -27,11 +27,8 @@ const getUserById = async (req, res) => {
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(400).json({ message: isCastError })
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).json({ message: isCastError })
     }
-    // if (err.name === NotFoundError.name) {
-    //   return res.status(constants.HTTP_STATUS_NOT_FOUND).json(err.message)
-    // }
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
   }
 }
