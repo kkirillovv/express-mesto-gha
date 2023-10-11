@@ -78,7 +78,8 @@ const likeCardById = async (req, res) => {
 
 // eslint-disable-next-line consistent-return
 const dislikeCardById = async (req, res) => {
-  const func = (id) => Card.findByIdAndUpdate(
+  const { id } = req.params
+  const func = () => Card.findByIdAndUpdate(
     id,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },

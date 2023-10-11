@@ -35,7 +35,7 @@ const handleErrors = async (req, res, func, message, errorMessage) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return Promise.reject(new CastError(isCastError))
     }
-    const result = await func(id)
+    const result = await func()
     if (!result) {
       return Promise.reject(new NotFoundError(errorMessage))
     }
