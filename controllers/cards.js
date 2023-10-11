@@ -50,13 +50,16 @@ const likeCardById = async (req, res) => {
   try {
     const { cardId } = req.params
     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return res.status(404).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
     }
     const card = await Card.findByIdAndUpdate(
       cardId,
       { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
       { new: true },
     )
+    if (!card) {
+      return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })
+    }
     res.status(200).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
@@ -74,13 +77,16 @@ const dislikeCardById = async (req, res) => {
   try {
     const { cardId } = req.params
     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return res.status(404).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
+      return res.status(400).send({ message: `Карточка с Id = ${req.user._id} не найдена` })
     }
     const card = await Card.findByIdAndUpdate(
       cardId,
       { $pull: { likes: req.user._id } }, // убрать _id из массива
       { new: true },
     )
+    if (!card) {
+      return res.status(404).json({ message: `Карточка с Id = ${req.user._id} не существует` })
+    }
     res.status(200).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
