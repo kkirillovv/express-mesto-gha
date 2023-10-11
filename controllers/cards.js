@@ -69,7 +69,7 @@ const likeCardById = async (req, res) => {
     res.status(constants.HTTP_STATUS_OK).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(CastError.statusCode).send({ message: isCastError })
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
     }
     if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
@@ -96,7 +96,7 @@ const dislikeCardById = async (req, res) => {
     res.status(constants.HTTP_STATUS_OK).send({ data: card })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(CastError.statusCode).send({ message: isCastError })
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
     }
     if (err.name === NotFoundError.name) {
       return res.status(NotFoundError.statusCode).send(err.message)
