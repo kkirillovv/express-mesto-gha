@@ -1,10 +1,9 @@
 const { constants } = require('http2')
 const Card = require('../models/card')
-const { CastError, handleErrors } = require('../errors')
+const { handleErrors } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
-const isCastError = 'Cast to ObjectId failed'
 
 const getCards = (req, res) => {
   Card.find({})
@@ -27,21 +26,11 @@ const createCard = (req, res) => {
     })
 }
 
-// eslint-disable-next-line consistent-return
 const deleteCardById = async (req, res) => {
-  try {
-    const { cardId } = req.params
-    const card = await Card.findByIdAndDelete(cardId)
-    if (!card) {
-      return res.status(constants.HTTP_STATUS_NOT_FOUND).json({ message: `Карточка с Id = ${req.user._id} не существует` })
-    }
-    res.status(constants.HTTP_STATUS_OK).send({ data: card, message: 'Карточка удалена' })
-  } catch (err) {
-    if (err.name === CastError.name) {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
-    }
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
-  }
+  const func = (cardId) => Card.findByIdAndDelete(cardId)
+  const errorMessage = `Карточка с Id = ${req.user._id} не существует`
+  const mes = 'Карточка удалена'
+  handleErrors(req, res, func, mes, errorMessage)
 }
 
 const likeCardById = async (req, res) => {
