@@ -21,14 +21,14 @@ class CastError extends Error {
 }
 
 // eslint-disable-next-line consistent-return
-const handleErrors = async (req, res, func, errorMessage) => {
+const handleErrors = async (req, res, func, mes, errorMessage) => {
   try {
     const { cardId } = req.params
     const result = await func(cardId)
     if (!result) {
       return res.status(constants.HTTP_STATUS_NOT_FOUND).json({ message: errorMessage })
     }
-    res.status(constants.HTTP_STATUS_OK).json({ data: result })
+    res.status(constants.HTTP_STATUS_OK).json({ data: result, message: mes })
   } catch (err) {
     if (err.name === CastError.name) {
       return res.status(constants.HTTP_STATUS_BAD_REQUEST).json({ message: isCastError })

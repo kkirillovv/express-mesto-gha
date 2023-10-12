@@ -51,7 +51,8 @@ const likeCardById = async (req, res) => {
     { new: true },
   )
   const errorMessage = `Id = ${req.user._id} карточки не существует`
-  handleErrors(req, res, func, errorMessage)
+  const mes = 'Поставили лайк'
+  handleErrors(req, res, func, mes, errorMessage)
 }
 
 const dislikeCardById = async (req, res) => {
@@ -60,8 +61,9 @@ const dislikeCardById = async (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
+  const mes = 'Убрали лайк'
   const errorMessage = `У карточки нет лайка от пользователя с Id = ${req.user._id}`
-  handleErrors(req, res, func, errorMessage)
+  handleErrors(req, res, func, mes, errorMessage)
 }
 
 // eslint-disable-next-line object-curly-newline
