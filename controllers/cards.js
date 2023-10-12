@@ -66,13 +66,13 @@ const likeCardById = async (req, res) => {
 }
 
 const dislikeCardById = async (req, res) => {
-  const { id } = req.params
+  const { cardId } = req.params
   const func = () => Card.findByIdAndUpdate(
-    id,
+    cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-  const errorMessage = `Карточка с Id = ${req.user._id} не существует`
+  const errorMessage = `У карточки нет лайка с Id = ${cardId}`
   handleErrors(req, res, func, errorMessage)
 }
 

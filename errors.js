@@ -31,9 +31,9 @@ const handleErrors = async (req, res, func, errorMessage) => {
     res.status(constants.HTTP_STATUS_OK).json({ data: result })
   } catch (err) {
     if (err.name === CastError.name) {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isCastError })
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST).json({ message: isCastError })
     }
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).json({ message: isDefaultServerError })
   }
 }
 
