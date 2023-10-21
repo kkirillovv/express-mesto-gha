@@ -1,7 +1,12 @@
+/* eslint-disable no-console */
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError, CastError } = require('../errors')
+const { NotFoundError, CastError, ConflictingRequestError } = require('../errors')
+
+const { NODE_ENV, JWT_SECRET } = process.env
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
@@ -34,17 +39,26 @@ const getUserById = async (req, res) => {
 }
 
 // eslint-disable-next-line consistent-return
-const createUser = async (req, res) => {
-  try {
-    const { name, about, avatar } = req.body
-    const user = await User.create({ name, about, avatar })
-    res.status(constants.HTTP_STATUS_CREATED).send({ data: user })
-  } catch (err) {
+const createUser = async (req, res, next) => {
+  const { name, about, avatar, email, password } = req.body
+  bcrypt.hash(password, 10)
+  .then ((hash) => User.create({ name, about, avatar, email, password: hash }))
+  .then ((user) => res.status(constants.HTTP_STATUS_CREATED).send({
+    name: user.name, 
+    about: user.about, 
+    avatar: user.avatar, 
+    email: user.email, 
+    _id: user._id
+  }))
+  .catch((err) => {
     if (err.name === 'ValidationError') {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
+      next(new CastError({ message: isValidationError }))
+    } else if (err.code === 11000) {
+      next(new ConflictingRequestError({ message: 'Такой email уже существует в базе пользователей'}))
+    } else {
+      next(err)
     }
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
-  }
+  })
 }
 
 // eslint-disable-next-line consistent-return
@@ -89,5 +103,22 @@ const editUserAvatar = async (req, res) => {
   }
 }
 
+const loginUser = (req, res, next) => {
+  const { email, password } = req.body
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id }, 
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secretkey', 
+        { expiresIn: '7d' })
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+      })
+      res.status(constants.HTTP_STATUS_OK).send({ token })
+    })
+    .catch((err) => next(err))
+}
+
 // eslint-disable-next-line object-curly-newline
-module.exports = { getUsers, getUserById, createUser, editUserData, editUserAvatar }
+module.exports = { getUsers, getUserById, createUser, editUserData, editUserAvatar, loginUser }

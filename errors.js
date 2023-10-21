@@ -1,22 +1,40 @@
 // eslint-disable-next-line max-classes-per-file
 const { constants } = require('http2')
 
+// const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
 const isCastError = 'Cast to ObjectId failed'
 
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message)
-    this.name = 'NotFoundError'
-    this.statusCode = 404 // HTTP_STATUS_NOT_FOUND
-  }
-}
 
 class CastError extends Error {
   constructor(message) {
     super(message)
     this.name = 'CastError'
-    this.statusCode = 400 // HTTP_STATUS_BAD_REQUEST
+    this.statusCode = constants.HTTP_STATUS_BAD_REQUEST // 400
+  }
+}
+
+class UnauthorizedError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'UnauthorizedError'
+    this.statusCode = 401
+  }
+}
+
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'NotFoundError'
+    this.statusCode = constants.HTTP_STATUS_NOT_FOUND // 404
+  }
+}
+
+class ConflictingRequestError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'ConflictingRequestError'
+    this.statusCode = 409
   }
 }
 
@@ -38,4 +56,10 @@ const handleErrors = async (req, res, func, mes, errorMessage) => {
 }
 
 // eslint-disable-next-line object-curly-newline
-module.exports = { NotFoundError, CastError, handleErrors }
+module.exports = { 
+  CastError, 
+  UnauthorizedError, 
+  NotFoundError, 
+  ConflictingRequestError, 
+  handleErrors 
+}
