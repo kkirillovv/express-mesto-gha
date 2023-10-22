@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError, CastError } = require('../errors') // , ConflictingRequestError
+const { NotFoundError, CastError, ConflictingRequestError } = require('../errors')
 
 const { NODE_ENV, JWT_SECRET } = process.env
 
@@ -27,7 +27,7 @@ const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      throw new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
+      throw new NotFoundError({ message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
@@ -40,7 +40,7 @@ const getUserInfo = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      throw new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
+      throw new NotFoundError({ message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
     }
     delete user.toObject().password
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
@@ -58,19 +58,19 @@ const createUser = async (req, res, next) => {
     const hash = await bcrypt.hash(password, 10)
     // eslint-disable-next-line object-curly-newline
     const user = await User.create({ name, about, avatar, email, password: hash })
-    res.status(constants.HTTP_STATUS_CREATE.json({
+    res.status(constants.HTTP_STATUS_CREATE).json({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
       email: user.email,
       _id: user._id,
-    }))
+    })
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new CastError({ message: isValidationError }))
-    // } else if (err.code === 11000) {
-    //   next(new ConflictingRequestError({
-    // message: 'Такой email уже существует в базе пользователей' }))
+    // eslint-disable-next-line no-else-return
+    } else if (err.code === 11000) {
+      return next(new ConflictingRequestError({ message: 'Такой email уже существует в базе пользователей' }))
     }
     return next(err)
   }
@@ -83,7 +83,7 @@ const editUserData = async (req, res, next) => {
     // eslint-disable-next-line max-len
     const user = await User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     if (!user) {
-      return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
+      return Promise.reject(new NotFoundError({ message: `Пользователь с Id = ${req.user._id} не найден` }))
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
@@ -98,7 +98,7 @@ const editUserAvatar = async (req, res, next) => {
     // eslint-disable-next-line max-len
     const user = await User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     if (!user) {
-      return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
+      return Promise.reject(new NotFoundError({ message: `Пользователь с Id = ${req.user._id} не найден` }))
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
