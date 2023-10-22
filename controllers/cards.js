@@ -45,10 +45,11 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
   }
 }
 
+// eslint-disable-next-line consistent-return
 const deleteCardById = (req, res, next) => {
   const card = Card.findById(req.params.cardId).orFail()
   if (card.owner.toString() !== req.user._id) {
-    throw new ForbiddenError({ message: 'Нельзя удалять карточку другого пользователя' })
+    return Promise.reject(new ForbiddenError({ message: 'Нельзя удалять карточку другого пользователя' }))
   }
   const func = (cardId) => Card.findByIdAndDelete(cardId)
   const errorMessage = 'Удаление карточки с несуществующим в БД id'
