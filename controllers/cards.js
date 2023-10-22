@@ -49,9 +49,7 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
 const deleteCardById = (req, res, next) => {
   Card.findById(req.params.cardId).orFail(new NotFoundError({ message: 'Карточка с указанным id не существует' }))
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError({ message: 'Карточка с указанным id не существует' })
-      } else if (card.owner.toString() !== req.user._id) {
+      if (card.owner.toString() !== req.user._id) {
         throw new ForbiddenError({ message: 'Нельзя удалять карточку другого пользователя' })
       }
     })
