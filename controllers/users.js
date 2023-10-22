@@ -4,11 +4,11 @@ const jwt = require('jsonwebtoken')
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError, CastError, ConflictingRequestError } = require('../errors')
+const { NotFoundError } = require('../errors') // , CastError, ConflictingRequestError
 
 const { NODE_ENV, JWT_SECRET } = process.env
 
-const isValidationError = 'Переданы некорректные данные'
+// const isValidationError = 'Переданы некорректные данные'
 // const isDefaultServerError = 'Ошибка сервера по умолчанию'
 // const isCastError = 'Cast to ObjectId failed'
 
@@ -58,7 +58,7 @@ const createUser = async (req, res, next) => {
     const hash = await bcrypt.hash(password, 10)
     // eslint-disable-next-line object-curly-newline
     const user = await User.create({ name, about, avatar, email, password: hash })
-    res.status(constants.HTTP_STATUS_CREATE).json({
+    res.status(constants.HTTP_STATUS_CREATED).json({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
@@ -66,12 +66,13 @@ const createUser = async (req, res, next) => {
       _id: user._id,
     })
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      return next(new CastError({ message: isValidationError }))
-    // eslint-disable-next-line no-else-return
-    } else if (err.code === 11000) {
-      return next(new ConflictingRequestError({ message: 'Такой email уже существует в базе пользователей' }))
-    }
+    // if (err.name === 'ValidationError') {
+    //   return next(new CastError({ message: isValidationError }))
+    // // eslint-disable-next-line no-else-return
+    // } else if (err.code === 11000) {
+    //   return next(new ConflictingRequestError({
+    // message: 'Такой email уже существует в базе пользователей' }))
+    // }
     return next(err)
   }
 }
