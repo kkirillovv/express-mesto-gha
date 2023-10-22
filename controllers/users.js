@@ -121,4 +121,11 @@ const loginUser = (req, res, next) => {
 }
 
 // eslint-disable-next-line object-curly-newline
-module.exports = { getUsers, getUserById, createUser, editUserData, editUserAvatar, loginUser }
+module.exports = { 
+  getUsers, 
+  getUserById, 
+  createUser, 
+  editUserData, 
+  editUserAvatar, 
+  loginUser 
+}

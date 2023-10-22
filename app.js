@@ -2,6 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const { constants } = require('http2')
 const usersRouter = require('./routes/users')
+const loginUser = require('./route/signin')
+const createUser = require('./route/signup')
 const cardsRouter = require('./routes/cards')
 const auth = require('./middlewares/auth')
 
@@ -23,11 +25,9 @@ app.use(express.urlencoded({ extended: true }))
 app.post('/signin', loginUser)
 app.post('/signup', createUser)
 
-app.use(auth)
-
-app.use('/users', usersRouter)
-app.use('/cards', cardsRouter)
-app.use('*', (req, res) => {
+app.use('/users', auth, usersRouter)
+app.use('/cards', auth, cardsRouter)
+app.use('*', auth, (req, res) => {
   const isPageNotFoundError = 'Запрашиваемая страница не найдена'
   res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: isPageNotFoundError })
 })
