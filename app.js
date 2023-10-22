@@ -23,8 +23,8 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.post('/signin', loginUser)
-app.post('/signup', createUser)
+app.use('/signin', loginUser)
+app.use('/signup', createUser)
 
 app.use('/users', auth, usersRouter)
 app.use('/cards', auth, cardsRouter)
