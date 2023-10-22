@@ -1,5 +1,4 @@
-const urlRegExp = /^(http|https):\/\/(www\.)?\S+\.\S+$/
-// /https?:\/\/(www\.)?[\w-]+(\.\w+)+([/\w-._~:?#[\]@!$&'()*+,;=]+)?#?/;
+const urlRegExp = /^https?:\/\/(www\.)?\S+\.\S+$/
 const emailRegExp = /^\S+@\S+\.\S+$/
 
 module.exports = { urlRegExp, emailRegExp }
