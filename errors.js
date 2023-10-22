@@ -5,7 +5,6 @@ const { constants } = require('http2')
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
 const isCastError = 'Cast to ObjectId failed'
 
-
 class CastError extends Error {
   constructor(message) {
     super(message)
@@ -18,7 +17,7 @@ class UnauthorizedError extends Error {
   constructor(message) {
     super(message)
     this.name = 'UnauthorizedError'
-    this.statusCode = 401
+    this.statusCode = constants.HTTP_STATUS_UNAUTHORIZED // 401
   }
 }
 
@@ -34,7 +33,7 @@ class ConflictingRequestError extends Error {
   constructor(message) {
     super(message)
     this.name = 'ConflictingRequestError'
-    this.statusCode = 409
+    this.statusCode = constants.HTTP_STATUS_CONFLICT // 409
   }
 }
 
@@ -56,10 +55,10 @@ const handleErrors = async (req, res, func, mes, errorMessage) => {
 }
 
 // eslint-disable-next-line object-curly-newline
-module.exports = { 
-  CastError, 
-  UnauthorizedError, 
-  NotFoundError, 
-  ConflictingRequestError, 
-  handleErrors 
+module.exports = {
+  CastError,
+  UnauthorizedError,
+  NotFoundError,
+  ConflictingRequestError,
+  handleErrors,
 }
