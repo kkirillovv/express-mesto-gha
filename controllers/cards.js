@@ -1,11 +1,6 @@
 const { constants } = require('http2')
 const Card = require('../models/card')
-// eslint-disable-next-line object-curly-newline
 const { ForbiddenError, NotFoundError } = require('../errors')
-
-// const isValidationError = 'Переданы некорректные данные'
-// const isDefaultServerError = 'Ошибка сервера по умолчанию'
-// const isCastError = 'Cast to ObjectId failed'
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -30,9 +25,6 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
     }
     res.status(constants.HTTP_STATUS_OK).json({ data: result, message: mes })
   } catch (err) {
-    // if (err.name === 'CastError') {
-    //   return next(new CastError({ message: isCastError }))
-    // }
     return next(err)
   }
 }
