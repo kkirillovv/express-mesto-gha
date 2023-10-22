@@ -47,15 +47,13 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
 
 // eslint-disable-next-line consistent-return
 const deleteCardById = (req, res, next) => {
-  // const card = Card.findById(req.params.cardId)
-  // if (card.owner.toString() !== req.user._id) {
-  //   return Promise.reject(new ForbiddenError({
-  //  message: 'Нельзя удалять карточку другого пользователя' }))
-  // }
   Card.findById(req.params.cardId).orFail()
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
         throw new ForbiddenError({ message: 'Нельзя удалять карточку другого пользователя' })
+      }
+      if (!card) {
+        throw new NotFoundError({ message: 'Карточка с указанным id не существует' })
       }
     })
     .catch(next)
@@ -64,30 +62,6 @@ const deleteCardById = (req, res, next) => {
   const mes = 'Карточка удалена'
   handleErrors(req, res, func, mes, errorMessage, next)
 }
-
-// const deleteCard = async (req, res, next) => {
-//   try {
-//     const { cardId } = req.params;
-
-//     const card = await Card.findById(cardId);
-
-//     if (!card) {
-//       const notFoundError = new NotFoundError('Карточка с указанным _id не найдена.');
-//       return next(notFoundError);
-//     }
-
-//     if (card.owner.toString() !== req.user._id) {
-//       const forbiddenError = new ForbiddenError('Недостаточно прав для удаления карточки');
-//       return next(forbiddenError);
-//     }
-
-//     await Card.findByIdAndDelete(cardId);
-//     return res.status(HTTP_STATUS_OK).json({ message: 'Карточка удалена' });
-//   } catch (error) {
-//     const internalError = new InternalServerError('На сервере произошла ошибка');
-//     return next(internalError);
-//   }
-// };
 
 const likeCardById = (req, res, next) => {
   const func = (cardId) => Card.findByIdAndUpdate(
