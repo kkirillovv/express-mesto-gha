@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const { constants } = require('http2')
+const { errors } = require('celebrate')
 const usersRouter = require('./routes/users')
 const loginUser = require('./routes/signin')
 const createUser = require('./routes/signup')
@@ -33,6 +34,7 @@ app.use('*', auth, (req, res) => {
   res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: isPageNotFoundError })
 })
 
+app.use(errors())
 // app.use(handleErrors)
 
 app.use((err, req, res, next) => {
