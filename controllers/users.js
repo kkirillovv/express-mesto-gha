@@ -4,14 +4,9 @@ const jwt = require('jsonwebtoken')
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-// eslint-disable-next-line object-curly-newline
 const { UnauthorizedError, NotFoundError, ConflictingRequestError } = require('../errors')
 
 const { NODE_ENV, JWT_SECRET } = process.env
-
-// const isValidationError = 'Переданы некорректные данные'
-// const isDefaultServerError = 'Ошибка сервера по умолчанию'
-// const isCastError = 'Cast to ObjectId failed'
 const isWrongEmailOrPassword = 'Неправильные почта или пароль'
 
 // eslint-disable-next-line consistent-return
@@ -33,9 +28,6 @@ const getUserById = async (req, res, next) => {
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    // if (err.name === 'CastError') {
-    //   return next(new CastError({ message: isCastError }))
-    // }
     return next(err)
   }
 }

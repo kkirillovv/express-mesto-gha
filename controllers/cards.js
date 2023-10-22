@@ -3,7 +3,7 @@ const Card = require('../models/card')
 // eslint-disable-next-line object-curly-newline
 const { ForbiddenError, NotFoundError, CastError } = require('../errors')
 
-const isValidationError = 'Переданы некорректные данные'
+// const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
 const isCastError = 'Cast to ObjectId failed'
 
@@ -14,18 +14,12 @@ const getCards = (req, res) => {
     .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError }))
 }
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
     // eslint-disable-next-line consistent-return
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
-      }
-      // eslint-disable-next-line max-len
-      res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
-    })
+    .catch(next)
 }
 
 // eslint-disable-next-line consistent-return
