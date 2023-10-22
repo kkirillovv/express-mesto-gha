@@ -1,24 +1,22 @@
 const { constants } = require('http2')
 const Card = require('../models/card')
 // eslint-disable-next-line object-curly-newline
-const { ForbiddenError, NotFoundError, CastError } = require('../errors')
+const { ForbiddenError, NotFoundError } = require('../errors')
 
 // const isValidationError = 'Переданы некорректные данные'
-const isDefaultServerError = 'Ошибка сервера по умолчанию'
-const isCastError = 'Cast to ObjectId failed'
+// const isDefaultServerError = 'Ошибка сервера по умолчанию'
+// const isCastError = 'Cast to ObjectId failed'
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    // eslint-disable-next-line max-len
-    .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError }))
+    .catch(next)
 }
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
-    // eslint-disable-next-line consistent-return
     .catch(next)
 }
 
@@ -32,9 +30,9 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
     }
     res.status(constants.HTTP_STATUS_OK).json({ data: result, message: mes })
   } catch (err) {
-    if (err.name === 'CastError') {
-      return next(new CastError({ message: isCastError }))
-    }
+    // if (err.name === 'CastError') {
+    //   return next(new CastError({ message: isCastError }))
+    // }
     return next(err)
   }
 }
