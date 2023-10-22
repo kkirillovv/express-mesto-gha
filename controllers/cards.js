@@ -26,14 +26,14 @@ const createCard = (req, res) => {
     })
 }
 
-const deleteCardById = async (req, res) => {
+const deleteCardById = async (req, res, next) => {
   const func = (cardId) => Card.findByIdAndDelete(cardId)
   const errorMessage = `Карточка с Id = ${req.user._id} не существует`
   const mes = 'Карточка удалена'
-  handleErrors(req, res, func, mes, errorMessage)
+  handleErrors(req, res, func, mes, errorMessage, next)
 }
 
-const likeCardById = async (req, res) => {
+const likeCardById = async (req, res, next) => {
   const func = (cardId) => Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -41,10 +41,10 @@ const likeCardById = async (req, res) => {
   )
   const errorMessage = `Id = ${req.user._id} карточки не существует`
   const mes = 'Поставили лайк'
-  handleErrors(req, res, func, mes, errorMessage)
+  handleErrors(req, res, func, mes, errorMessage, next)
 }
 
-const dislikeCardById = async (req, res) => {
+const dislikeCardById = async (req, res, next) => {
   const func = (cardId) => Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
@@ -52,7 +52,7 @@ const dislikeCardById = async (req, res) => {
   )
   const mes = 'Убрали лайк'
   const errorMessage = `У карточки нет лайка от пользователя с Id = ${req.user._id}`
-  handleErrors(req, res, func, mes, errorMessage)
+  handleErrors(req, res, func, mes, errorMessage, next)
 }
 
 // eslint-disable-next-line object-curly-newline
