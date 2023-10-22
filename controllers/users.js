@@ -4,11 +4,11 @@ const jwt = require('jsonwebtoken')
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError, CastError, ConflictingRequestError } = require('../errors')
+const { NotFoundError } = require('../errors') // , CastError, ConflictingRequestError
 
 const { NODE_ENV, JWT_SECRET } = process.env
 
-const isValidationError = 'Переданы некорректные данные'
+// const isValidationError = 'Переданы некорректные данные'
 // const isDefaultServerError = 'Ошибка сервера по умолчанию'
 // const isCastError = 'Cast to ObjectId failed'
 
@@ -66,13 +66,15 @@ const createUser = async (req, res, next) => {
       _id: user._id,
     }))
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      next(new CastError({ message: isValidationError }))
-    } else if (err.code === 11000) {
-      next(new ConflictingRequestError({ message: 'Такой email уже существует в базе пользователей' }))
-    } else {
-      next(err)
-    }
+    return next(err)
+    // if (err.name === 'ValidationError') {
+    //   next(new CastError({ message: isValidationError }))
+    // } else if (err.code === 11000) {
+    //   next(new ConflictingRequestError({
+    // message: 'Такой email уже существует в базе пользователей' }))
+    // } else {
+    //   next(err)
+    // }
   }
 }
 
