@@ -24,7 +24,7 @@ const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      throw new NotFoundError({ message: `Получение пользователя с несуществующим в БД id - ${req.params.userId}` })
+      throw new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.params.userId}`)
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
@@ -60,7 +60,7 @@ const createUser = async (req, res, next) => {
     })
   } catch (err) {
     if (err.code === 11000) {
-      return next(new ConflictingRequestError({ message: 'Такой email уже существует в базе пользователей' }))
+      return next(new ConflictingRequestError('Такой email уже существует в базе пользователей'))
     }
     return next(err)
   }
@@ -73,7 +73,7 @@ const editUserData = async (req, res, next) => {
     // eslint-disable-next-line max-len
     const user = await User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     if (!user) {
-      return Promise.reject(new NotFoundError({ message: `Пользователь с Id = ${req.user._id} не найден` }))
+      return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
@@ -88,7 +88,7 @@ const editUserAvatar = async (req, res, next) => {
     // eslint-disable-next-line max-len
     const user = await User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     if (!user) {
-      return Promise.reject(new NotFoundError({ message: `Пользователь с Id = ${req.user._id} не найден` }))
+      return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {

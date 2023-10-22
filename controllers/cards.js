@@ -21,7 +21,7 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
     const { cardId } = req.params
     const result = await func(cardId)
     if (!result) {
-      throw new NotFoundError({ message: errorMessage })
+      throw new NotFoundError(errorMessage)
     }
     res.status(constants.HTTP_STATUS_OK).json({ data: result, message: mes })
   } catch (err) {
@@ -31,10 +31,11 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
 
 // eslint-disable-next-line consistent-return
 const deleteCardById = (req, res, next) => {
-  Card.findById(req.params.cardId).orFail(new NotFoundError({ message: 'Карточка с указанным id не существует' }))
+  Card.findById(req.params.cardId).orFail(new NotFoundError('Карточка с указанным id не существует'))
+    // eslint-disable-next-line consistent-return
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
-        throw new ForbiddenError({ message: 'Нельзя удалять карточку другого пользователя' })
+        return Promise.reject(new ForbiddenError('Нельзя удалять карточку другого пользователя'))
       }
     })
     .catch(next)

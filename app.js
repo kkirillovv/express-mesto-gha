@@ -1,6 +1,5 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const { constants } = require('http2')
 const { errors } = require('celebrate')
 
 const usersRouter = require('./routes/users')
@@ -8,7 +7,7 @@ const loginUser = require('./routes/signin')
 const createUser = require('./routes/signup')
 const cardsRouter = require('./routes/cards')
 const auth = require('./middlewares/auth')
-const { handleErrors } = require('./errors')
+const { NotFoundError, handleErrors } = require('./errors')
 
 // Слушаем 3000 порт
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env
@@ -28,11 +27,13 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/signin', loginUser)
 app.use('/signup', createUser)
 
-app.use('/users', auth, usersRouter)
-app.use('/cards', auth, cardsRouter)
-app.use('*', auth, (req, res) => {
+app.use(auth)
+app.use('/users', usersRouter)
+app.use('/cards', cardsRouter)
+// eslint-disable-next-line no-unused-vars
+app.use('*', (req, res) => {
   const isPageNotFoundError = 'Запрашиваемая страница не найдена'
-  res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: isPageNotFoundError })
+  throw new NotFoundError(isPageNotFoundError)
 })
 
 app.use(errors())
