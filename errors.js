@@ -1,10 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 const { constants } = require('http2')
 
-// const isValidationError = 'Переданы некорректные данные'
-// const isDefaultServerError = 'Ошибка сервера по умолчанию'
-// const isCastError = 'Cast to ObjectId failed'
-
 class CastError extends Error {
   constructor(message) {
     super(message)
@@ -57,6 +53,9 @@ const handleErrors = (err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = constants.HTTP_STATUS_INTERNAL_SERVER_ERROR, message } = err
   const isDefaultServerError = 'Ошибка сервера по умолчанию'
+  // const isValidationError = 'Переданы некорректные данные'
+  // const isCastError = 'Cast to ObjectId failed'
+  // const isWrongEmailOrPassword = 'Неправильные почта или пароль'
 
   res
     .status(statusCode)
