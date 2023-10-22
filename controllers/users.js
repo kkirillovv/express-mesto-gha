@@ -9,32 +9,45 @@ const { NotFoundError, CastError, ConflictingRequestError } = require('../errors
 const { NODE_ENV, JWT_SECRET } = process.env
 
 const isValidationError = 'Переданы некорректные данные'
-const isDefaultServerError = 'Ошибка сервера по умолчанию'
-const isCastError = 'Cast to ObjectId failed'
+// const isDefaultServerError = 'Ошибка сервера по умолчанию'
+// const isCastError = 'Cast to ObjectId failed'
 
-const getUsers = async (req, res) => {
+// eslint-disable-next-line consistent-return
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({})
     res.status(constants.HTTP_STATUS_OK).send({ data: users })
   } catch (err) {
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
+    return next(err)
   }
 }
 
 // eslint-disable-next-line consistent-return
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      return res.status(constants.HTTP_STATUS_NOT_FOUND)
-        .json({ message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
+      const notFoundError = new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
+      return next(notFoundError)
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    if (err.name === CastError.name) {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).json({ message: isCastError })
+    return next(err)
+  }
+}
+
+// eslint-disable-next-line consistent-return
+const getUserInfo = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId)
+    if (!user) {
+      const notFoundError = new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
+      return next(notFoundError)
     }
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
+    delete user.toObject().password
+    res.status(constants.HTTP_STATUS_OK).send({ data: user })
+  } catch (err) {
+    return next(err)
   }
 }
 
@@ -66,44 +79,32 @@ const createUser = async (req, res, next) => {
 }
 
 // eslint-disable-next-line consistent-return
-const editUserData = async (req, res) => {
+const editUserData = async (req, res, next) => {
   try {
     const { name, about } = req.body
     // eslint-disable-next-line max-len
     const user = await User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     if (!user) {
-      return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
+      return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
-    }
-    if (err.name === NotFoundError.name) {
-      return res.status(constants.HTTP_STATUS_NOT_FOUND).send(err.message)
-    }
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
+    return next(err)
   }
 }
 
 // eslint-disable-next-line consistent-return
-const editUserAvatar = async (req, res) => {
+const editUserAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body
     // eslint-disable-next-line max-len
     const user = await User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     if (!user) {
-      return Promise.reject(new NotFoundError(`Карточка с Id = ${req.user._id} не найдена`))
+      return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: isValidationError })
-    }
-    if (err.message === NotFoundError.name) {
-      return res.status(constants.HTTP_STATUS_NOT_FOUND).send(err.message)
-    }
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: isDefaultServerError })
+    return next(err)
   }
 }
 
@@ -129,6 +130,7 @@ const loginUser = (req, res, next) => {
 module.exports = {
   getUsers,
   getUserById,
+  getUserInfo,
   createUser,
   editUserData,
   editUserAvatar,

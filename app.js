@@ -6,6 +6,7 @@ const loginUser = require('./routes/signin')
 const createUser = require('./routes/signup')
 const cardsRouter = require('./routes/cards')
 const auth = require('./middlewares/auth')
+const handleErrors = require('./errors')
 
 // Слушаем 3000 порт
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env
@@ -31,5 +32,7 @@ app.use('*', auth, (req, res) => {
   const isPageNotFoundError = 'Запрашиваемая страница не найдена'
   res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: isPageNotFoundError })
 })
+
+app.use(handleErrors)
 
 app.listen(PORT)
