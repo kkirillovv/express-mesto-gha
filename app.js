@@ -38,19 +38,4 @@ app.use('*', auth, (req, res) => {
 app.use(errors())
 app.use(handleErrors)
 
-// app.use((err, req, res, next) => {
-//   // если у ошибки нет статуса, выставляем 500
-//   const { statusCode = constants.HTTP_STATUS_INTERNAL_SERVER_ERROR, message } = err
-
-//   res
-//     .status(statusCode)
-//     .send({
-//       // проверяем статус и выставляем сообщение в зависимости от него
-//       message: statusCode === constants.HTTP_STATUS_INTERNAL_SERVER_ERROR // 500
-//         ? 'Ошибка сервера по умолчанию'
-//         : message,
-//     })
-//   next()
-// })
-
 app.listen(PORT)

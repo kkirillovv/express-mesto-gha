@@ -88,12 +88,12 @@ const editUserData = async (req, res, next) => {
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      return next(new CastError({ message: isValidationError }))
-    // eslint-disable-next-line no-else-return
-    } else if (err.name === 'CastError') {
-      return next(new CastError({ message: isCastError }))
-    }
+    // if (err.name === 'ValidationError') {
+    //   return next(new CastError({ message: isValidationError }))
+    // // eslint-disable-next-line no-else-return
+    // } else if (err.name === 'CastError') {
+    //   return next(new CastError({ message: isCastError }))
+    // }
     return next(err)
   }
 }
@@ -109,12 +109,12 @@ const editUserAvatar = async (req, res, next) => {
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      return next(new CastError({ message: isValidationError }))
-    // eslint-disable-next-line no-else-return
-    } else if (err.name === 'CastError') {
-      return next(new CastError({ message: isCastError }))
-    }
+    // if (err.name === 'ValidationError') {
+    //   return next(new CastError({ message: isValidationError }))
+    // // eslint-disable-next-line no-else-return
+    // } else if (err.name === 'CastError') {
+    //   return next(new CastError({ message: isCastError }))
+    // }
     return next(err)
   }
 }
