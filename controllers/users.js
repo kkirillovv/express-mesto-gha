@@ -38,16 +38,23 @@ const getUserById = async (req, res, next) => {
 // eslint-disable-next-line consistent-return
 const getUserInfo = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.userId)
-    if (!user) {
-      throw new NotFoundError({ message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
-    }
-    delete user.toObject().password
+    const user = await User.findById(req.user._id).orFail()
+    // if (!user) {
+    //   throw new NotFoundError({
+    //  message: `Получение пользователя с несуществующим в БД id - ${req.user._id}` })
+    // }
+    // delete user.toObject().password
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
     return next(err)
   }
 }
+
+// const getCurrentUser = (req, res, next) => {
+//   User.findById(req.user._id).orFail()
+//     .then((user) => res.send(user))
+//     .catch((err) => next(err))
+// }
 
 // eslint-disable-next-line consistent-return
 const createUser = async (req, res, next) => {
