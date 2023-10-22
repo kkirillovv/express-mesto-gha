@@ -1,7 +1,7 @@
 const { constants } = require('http2')
 const Card = require('../models/card')
 // eslint-disable-next-line object-curly-newline
-const { ForbiddenError, NotFoundError, CastError, InternalServerError } = require('../errors')
+const { ForbiddenError, NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
@@ -41,7 +41,7 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
     if (err.name === 'CastError') {
       return next(new CastError({ message: isCastError }))
     }
-    return next(new InternalServerError(isDefaultServerError))
+    return next(err)
   }
 }
 
