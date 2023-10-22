@@ -1,7 +1,7 @@
 const { constants } = require('http2')
 const Card = require('../models/card')
 // eslint-disable-next-line object-curly-newline
-const { NotFoundError, CastError } = require('../errors') // ForbiddenError,
+const { ForbiddenError, NotFoundError, CastError } = require('../errors')
 
 const isValidationError = 'Переданы некорректные данные'
 const isDefaultServerError = 'Ошибка сервера по умолчанию'
@@ -52,6 +52,13 @@ const deleteCardById = (req, res, next) => {
   //   return Promise.reject(new ForbiddenError({
   //  message: 'Нельзя удалять карточку другого пользователя' }))
   // }
+  Card.findById(req.params.cardId).orFail()
+    .then((card) => {
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError({ message: 'Нельзя удалять карточку другого пользователя' })
+      }
+    })
+    .catch(next)
   const func = (cardId) => Card.findByIdAndDelete(cardId)
   const errorMessage = 'Удаление карточки с несуществующим в БД id'
   const mes = 'Карточка удалена'
