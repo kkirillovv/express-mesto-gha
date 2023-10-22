@@ -45,12 +45,12 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
   }
 }
 
-const deleteCardById = async (req, res, next) => {
-  const card = await Card.findById(req.params.cardId)
+const deleteCardById = (req, res, next) => {
+  const card = Card.findById(req.params.cardId).orFail()
   if (card.owner.toString() !== req.user._id) {
     throw new ForbiddenError({ message: 'Нельзя удалять карточку другого пользователя' })
   }
-  const func = (cardId) => Card.findByIdAndDelete(cardId)
+  const func = (cardId) => Card.findByIdAndDelete(cardId).orFail()
   const errorMessage = `Удаление карточки с несуществующим в БД id = ${req.card._id}`
   const mes = 'Карточка удалена'
   handleErrors(req, res, func, mes, errorMessage, next)
@@ -61,7 +61,7 @@ const likeCardById = (req, res, next) => {
     cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
-  )
+  ).orFail()
   const errorMessage = `Id = ${req.card._id} карточки не существует`
   const mes = 'Поставили лайк'
   handleErrors(req, res, func, mes, errorMessage, next)
@@ -72,7 +72,7 @@ const dislikeCardById = (req, res, next) => {
     cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
-  )
+  ).orFail()
   const mes = 'Убрали лайк'
   const errorMessage = `Удаление лайка у карточки с несуществующим в БД id = ${req.card._id}`
   handleErrors(req, res, func, mes, errorMessage, next)
