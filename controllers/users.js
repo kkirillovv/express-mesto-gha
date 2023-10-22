@@ -27,8 +27,7 @@ const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      const notFoundError = new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
-      return next(notFoundError)
+      throw new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
     }
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
   } catch (err) {
@@ -41,8 +40,7 @@ const getUserInfo = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
     if (!user) {
-      const notFoundError = new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
-      return next(notFoundError)
+      throw new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.user._id}`)
     }
     delete user.toObject().password
     res.status(constants.HTTP_STATUS_OK).send({ data: user })
