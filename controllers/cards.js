@@ -47,7 +47,7 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
 
 // eslint-disable-next-line consistent-return
 const deleteCardById = (req, res, next) => {
-  Card.findById(req.params.cardId).orFail()
+  Card.findById(req.params.cardId).orFail(new NotFoundError({ message: 'Карточка с указанным id не существует' }))
     .then((card) => {
       if (!card) {
         throw new NotFoundError({ message: 'Карточка с указанным id не существует' })
