@@ -40,27 +40,29 @@ const getUserById = async (req, res) => {
 
 // eslint-disable-next-line consistent-return
 const createUser = async (req, res, next) => {
-  // eslint-disable-next-line object-curly-newline
-  const { name, about, avatar, email, password } = req.body
-  bcrypt.hash(password, 10)
+  try {
     // eslint-disable-next-line object-curly-newline
-    .then ((hash) => User.create({ name, about, avatar, email, password: hash }))
-    .then ((user) => res.status(constants.HTTP_STATUS_CREATED).send({
+    const { name, about, avatar, email, password } = req.body
+
+    const hash = await bcrypt.hash(password, 10)
+    // eslint-disable-next-line object-curly-newline
+    const user = User.create({ name, about, avatar, email, password: hash })
+    await user.status(constants.HTTP_STATUS_CREATE.json({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
       email: user.email,
       _id: user._id,
     }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new CastError({ message: isValidationError }))
-      } else if (err.code === 11000) {
-        next(new ConflictingRequestError({ message: 'Такой email уже существует в базе пользователей' }))
-      } else {
-        next(err)
-      }
-    })
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      next(new CastError({ message: isValidationError }))
+    } else if (err.code === 11000) {
+      next(new ConflictingRequestError({ message: 'Такой email уже существует в базе пользователей' }))
+    } else {
+      next(err)
+    }
+  }
 }
 
 // eslint-disable-next-line consistent-return
