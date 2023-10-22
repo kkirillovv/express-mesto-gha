@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken')
 const { constants } = require('http2')
 const { Promise } = require('mongoose')
 const User = require('../models/user')
-const { NotFoundError, CastError, ConflictingRequestError } = require('../errors')
+// eslint-disable-next-line object-curly-newline
+const { CastError, UnauthorizedError, NotFoundError, ConflictingRequestError } = require('../errors')
 
 const { NODE_ENV, JWT_SECRET } = process.env
 
@@ -117,22 +118,27 @@ const editUserAvatar = async (req, res, next) => {
   }
 }
 
-const loginUser = (req, res, next) => {
-  const { email, password } = req.body
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secretkey',
-        { expiresIn: '7d' },
-      )
-      res.cookie('jwt', token, {
-        maxAge: 3600000,
-        httpOnly: true,
-      })
-      res.status(constants.HTTP_STATUS_OK).send({ token })
+// eslint-disable-next-line consistent-return
+const loginUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body
+    const user = await User.findUserByCredentials(email, password)
+    const token = jwt.sign(
+      { _id: user._id },
+      NODE_ENV === 'production' ? JWT_SECRET : 'dev-secretkey',
+      { expiresIn: '7d' },
+    )
+    res.cookie('jwt', token, {
+      maxAge: 3600000,
+      httpOnly: true,
     })
-    .catch((err) => next(err))
+    res.status(constants.HTTP_STATUS_OK).send({ token })
+  } catch (err) {
+    if (err.message === 'Неправильные почта или пароль') {
+      return next(new UnauthorizedError({ message: 'Неправильные почта или пароль' }))
+    }
+    return next(err)
+  }
 }
 
 // eslint-disable-next-line object-curly-newline
