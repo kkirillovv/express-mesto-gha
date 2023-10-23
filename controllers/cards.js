@@ -37,12 +37,12 @@ const deleteCardById = (req, res, next) => {
       if (card.owner.toString() !== req.user._id) {
         return Promise.reject(new ForbiddenError('Нельзя удалять карточку другого пользователя'))
       }
+      const func = (cardId) => Card.findByIdAndDelete(cardId)
+      const errorMessage = 'Удаление карточки с несуществующим в БД id'
+      const mes = 'Карточка удалена'
+      handleErrors(req, res, func, mes, errorMessage, next)
     })
     .catch(next)
-  const func = (cardId) => Card.findByIdAndDelete(cardId)
-  const errorMessage = 'Удаление карточки с несуществующим в БД id'
-  const mes = 'Карточка удалена'
-  handleErrors(req, res, func, mes, errorMessage, next)
 }
 
 const likeCardById = (req, res, next) => {
