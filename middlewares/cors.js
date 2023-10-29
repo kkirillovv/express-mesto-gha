@@ -1,6 +1,9 @@
 const allowedCors = [
   'http://localhost:3000',
+  'http://localhost:3001',
   'http://kirillovk.nomoredomainsrocks.ru',
+  'https://kirillovk.nomoredomainsrocks.ru',
+  'http://api.kirillovk.nomoredomainsrocks.ru',
   'https://api.kirillovk.nomoredomainsrocks.ru',
 ]
 
