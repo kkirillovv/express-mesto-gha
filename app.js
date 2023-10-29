@@ -12,7 +12,7 @@ const createUser = require('./routes/signup')
 const cardsRouter = require('./routes/cards')
 const auth = require('./middlewares/auth')
 const { requestLogger, errorLogger } = require('./middlewares/logger')
-const { cors } = require('./middlewares/cors').default
+const { cors } = require('./middlewares/cors')
 const { NotFoundError, handleErrors } = require('./errors')
 
 // Слушаем 3000 порт
