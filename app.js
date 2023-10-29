@@ -1,6 +1,10 @@
+// eslint-disable-next-line import/no-unresolved
+require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const { errors } = require('celebrate')
+// eslint-disable-next-line import/no-unresolved
+const cors = require('cors')
 
 const usersRouter = require('./routes/users')
 const loginUser = require('./routes/signin')
@@ -21,6 +25,15 @@ mongoose.connect(DB_URL, {
 })
 
 const app = express()
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://kirillovk.nomoredomainsrocks.ru',
+    'https://api.kirillovk.nomoredomainsrocks.ru',
+  ],
+  credentials: true,
+}))
+// app.use(cors())
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
