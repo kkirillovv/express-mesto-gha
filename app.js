@@ -4,7 +4,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const { errors } = require('celebrate')
 // eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
-const cors = require('cors')
+// const cors = require('cors')
 
 const usersRouter = require('./routes/users')
 const loginUser = require('./routes/signin')
@@ -12,6 +12,7 @@ const createUser = require('./routes/signup')
 const cardsRouter = require('./routes/cards')
 const auth = require('./middlewares/auth')
 const { requestLogger, errorLogger } = require('./middlewares/logger')
+const { cors } = require('./middlewares/cors')
 const { NotFoundError, handleErrors } = require('./errors')
 
 // Слушаем 3000 порт
@@ -33,7 +34,7 @@ const app = express()
 //   ],
 //   credentials: true,
 // }))
-app.use(cors())
+app.use(cors)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
