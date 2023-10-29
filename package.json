@@ -7,7 +7,7 @@
     "lint": "npx eslint .",
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "Kirillov Kirill",
@@ -16,14 +16,17 @@
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.1",
     "express": "^4.18.2",
+    "express-winston": "^4.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.4",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "eslint": "^8.51.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.28.1",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1"
   }
 }

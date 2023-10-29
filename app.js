@@ -7,6 +7,7 @@ const loginUser = require('./routes/signin')
 const createUser = require('./routes/signup')
 const cardsRouter = require('./routes/cards')
 const auth = require('./middlewares/auth')
+const { requestLogger, errorLogger } = require('./middlewares/logger')
 const { NotFoundError, handleErrors } = require('./errors')
 
 // Слушаем 3000 порт
@@ -24,9 +25,11 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+app.use(requestLogger) // подключаем логгер запросов
+
+// за ним идут все обработчики роутов
 app.use('/signin', loginUser)
 app.use('/signup', createUser)
-
 app.use(auth)
 app.use('/users', usersRouter)
 app.use('/cards', cardsRouter)
@@ -36,7 +39,9 @@ app.use('*', (req, res) => {
   throw new NotFoundError(isPageNotFoundError)
 })
 
-app.use(errors())
-app.use(handleErrors)
+app.use(errorLogger) // подключаем логгер ошибок
+
+app.use(errors()) // обработчик ошибок celebrate
+app.use(handleErrors) // централизованный обработчик ошибок
 
 app.listen(PORT)
