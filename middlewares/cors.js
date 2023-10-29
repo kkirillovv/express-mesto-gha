@@ -7,7 +7,7 @@ const allowedCors = [
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE'
 
 // eslint-disable-next-line no-undef, consistent-return
-module.exports = cors((req, res, next) => {
+const cors = ((req, res, next) => {
   const { origin } = req.headers
   const { method } = req
   const requestHeaders = req.headers['access-control-request-headers']
@@ -22,3 +22,5 @@ module.exports = cors((req, res, next) => {
   }
   next()
 })
+
+module.exports = { cors }
