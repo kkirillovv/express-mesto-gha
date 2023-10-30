@@ -26,19 +26,19 @@ mongoose.connect(DB_URL, {
 })
 
 const app = express()
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'https://kirillovk.nomoredomainsrocks.ru',
-    'https://api.kirillovk.nomoredomainsrocks.ru',
-    'http://kirillovk.nomoredomainsrocks.ru',
-    'http://api.kirillovk.nomoredomainsrocks.ru',
-  ],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}))
-// app.use(cors())
+// app.use(cors({
+//   origin: [
+//     'http://localhost:3000',
+//     'http://localhost:3001',
+//     'https://kirillovk.nomoredomainsrocks.ru',
+//     'https://api.kirillovk.nomoredomainsrocks.ru',
+//     'http://kirillovk.nomoredomainsrocks.ru',
+//     'http://api.kirillovk.nomoredomainsrocks.ru',
+//   ],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true,
+// }))
+app.use(cors())
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
