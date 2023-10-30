@@ -6,6 +6,11 @@ const { errors } = require('celebrate')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const cors = require('cors')
 
+const corseAllowedOrigins = [
+  'http://kirillovk.nomoredomainsrocks.ru',
+  'https://kirillovk.nomoredomainsrocks.ru',
+]
+
 const usersRouter = require('./routes/users')
 const loginUser = require('./routes/signin')
 const createUser = require('./routes/signup')
@@ -26,6 +31,11 @@ mongoose.connect(DB_URL, {
 })
 
 const app = express()
+app.use(cors({
+  origin: corseAllowedOrigins,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}))
 // app.use(cors({
 //   origin: [
 //     'http://localhost:3000',
@@ -38,7 +48,7 @@ const app = express()
 //   allowedHeaders: ['Content-Type', 'Authorization'],
 //   credentials: true,
 // }))
-app.use(cors())
+// app.use(cors())
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
