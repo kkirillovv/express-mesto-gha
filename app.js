@@ -7,6 +7,7 @@ const { errors } = require('celebrate')
 const cors = require('cors')
 
 const corseAllowedOrigins = [
+  'http://localhost:3001',
   'http://kirillovk.nomoredomainsrocks.ru',
   'https://kirillovk.nomoredomainsrocks.ru',
 ]
@@ -36,24 +37,18 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }))
-// app.use(cors({
-//   origin: [
-//     'http://localhost:3000',
-//     'http://localhost:3001',
-//     'https://kirillovk.nomoredomainsrocks.ru',
-//     'https://api.kirillovk.nomoredomainsrocks.ru',
-//     'http://kirillovk.nomoredomainsrocks.ru',
-//     'http://api.kirillovk.nomoredomainsrocks.ru',
-//   ],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   credentials: true,
-// }))
-// app.use(cors())
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(requestLogger) // подключаем логгер запросов
+
+// Краш-тест сервера
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт')
+  }, 0)
+})
 
 // за ним идут все обработчики роутов
 app.use('/signin', loginUser)

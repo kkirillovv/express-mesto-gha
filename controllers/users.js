@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+require('dotenv').config()
 /* eslint-disable no-console */
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -13,7 +15,7 @@ const isWrongEmailOrPassword = 'Неправильные почта или па�
 const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({})
-    res.status(constants.HTTP_STATUS_OK).send({ data: users })
+    res.status(constants.HTTP_STATUS_OK).send(users)
   } catch (err) {
     return next(err)
   }
@@ -26,7 +28,7 @@ const getUserById = async (req, res, next) => {
     if (!user) {
       throw new NotFoundError(`Получение пользователя с несуществующим в БД id - ${req.params.userId}`)
     }
-    res.status(constants.HTTP_STATUS_OK).send({ data: user })
+    res.status(constants.HTTP_STATUS_OK).send(user)
   } catch (err) {
     return next(err)
   }
@@ -75,7 +77,7 @@ const editUserData = async (req, res, next) => {
     if (!user) {
       return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
     }
-    res.status(constants.HTTP_STATUS_OK).send({ data: user })
+    res.status(constants.HTTP_STATUS_OK).send(user)
   } catch (err) {
     return next(err)
   }
@@ -90,7 +92,7 @@ const editUserAvatar = async (req, res, next) => {
     if (!user) {
       return Promise.reject(new NotFoundError(`Пользователь с Id = ${req.user._id} не найден`))
     }
-    res.status(constants.HTTP_STATUS_OK).send({ data: user })
+    res.status(constants.HTTP_STATUS_OK).send(user)
   } catch (err) {
     return next(err)
   }
@@ -104,12 +106,12 @@ const loginUser = async (req, res, next) => {
     const token = jwt.sign(
       { _id: user._id },
       NODE_ENV === 'production' ? JWT_SECRET : 'dev-secretkey',
-      { expiresIn: '7d' },
+      // { expiresIn: '7d' },
     )
-    res.cookie('jwt', token, {
-      maxAge: 3600000,
-      httpOnly: true,
-    })
+    // res.cookie('jwt', token, {
+    //   maxAge: 3600000,
+    //   httpOnly: true,
+    // })
     res.status(constants.HTTP_STATUS_OK).send({ token })
   } catch (err) {
     if (err.message === isWrongEmailOrPassword) {

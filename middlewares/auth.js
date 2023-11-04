@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const { UnauthorizedError } = require('../errors')
 
@@ -10,6 +12,7 @@ module.exports = (req, res, next) => {
     throw new UnauthorizedError('Необходима авторизация')
   }
 
+  // const token = authorization.split('Bearer ')[1]
   const token = authorization.replace('Bearer ', '')
   let payload
 

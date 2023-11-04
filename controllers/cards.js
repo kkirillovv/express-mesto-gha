@@ -4,14 +4,14 @@ const { ForbiddenError, NotFoundError } = require('../errors')
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send(cards))
     .catch(next)
 }
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(constants.HTTP_STATUS_CREATED).send({ data: card }))
+    .then((card) => res.status(constants.HTTP_STATUS_CREATED).send(card))
     .catch(next)
 }
 
@@ -23,7 +23,7 @@ const handleErrors = async (req, res, func, mes, errorMessage, next) => {
     if (!result) {
       throw new NotFoundError(errorMessage)
     }
-    res.status(constants.HTTP_STATUS_OK).json({ data: result, message: mes })
+    res.status(constants.HTTP_STATUS_OK).json(result)
   } catch (err) {
     return next(err)
   }
